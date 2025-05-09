@@ -55,7 +55,7 @@ public class TeacherServiceImpl implements ITeacherService {
                     .map(Mapper::mapToTeacherReadOnlyDTO)
                     .orElseThrow(() -> new EntityInvalidArgumentException("Teacher", "Teacher with VAT=" + insertDTO.getVat() + " not inserted"));
             JPAHelper.commitTransaction();
-            LOGGER.info("Teacher with id: {}, vat: {},  firstname {}, lastname {} inserted",
+            LOGGER.info("Teacher with id={}, vat={}, firstname={}, lastname={} inserted",
                     teacher.getId(), teacher.getVat(), teacher.getLastname(), teacher.getFirstname());
             return readOnlyDTO;
         } catch (EntityInvalidArgumentException e) {
@@ -80,8 +80,8 @@ public class TeacherServiceImpl implements ITeacherService {
             teacherDAO.findByField("vat", updateDTO.getVat()).orElseThrow(() -> new EntityNotFoundException("Teacher", "Teacher with vat: "
                     + updateDTO.getVat() + " not found"));
 
-            teacherDAO.getById(updateDTO.getId()).orElseThrow(() -> new EntityNotFoundException("Teacher", "Teacher with vat: "
-                    + updateDTO.getVat() + " not found"));
+            teacherDAO.getById(updateDTO.getId()).orElseThrow(() -> new EntityNotFoundException("Teacher", "Teacher with id: "
+                    + updateDTO.getId() + " not found"));
 
             TeacherReadOnlyDTO readOnlyDTO = teacherDAO.update(teacher)
                     .map(Mapper::mapToTeacherReadOnlyDTO)
