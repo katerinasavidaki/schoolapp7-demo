@@ -108,6 +108,10 @@ public class TeacherRestController {
         return Response.status(Response.Status.OK).entity(readOnlyDTOS).build();
     }
 
+
+    @GET
+    @Path("/filtered")
+    @Produces(MediaType.APPLICATION_JSON)
     public PaginatedResult<TeacherReadOnlyDTO> getFilteredPaginated(@QueryParam("firstname") @DefaultValue("") String firstname,
                                                                     @QueryParam("lastname") @DefaultValue("") String lastname,
                                                                     @QueryParam("vat") @DefaultValue("") String vat,
