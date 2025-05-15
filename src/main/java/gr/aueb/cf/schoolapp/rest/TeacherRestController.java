@@ -116,7 +116,7 @@ public class TeacherRestController {
                                                                     @QueryParam("lastname") @DefaultValue("") String lastname,
                                                                     @QueryParam("vat") @DefaultValue("") String vat,
                                                                     @QueryParam("page") @DefaultValue("0") Integer page,
-                                                                    @QueryParam("size") @DefaultValue("0") Integer size)
+                                                                    @QueryParam("size") @DefaultValue("10") Integer size)
             throws EntityInvalidArgumentException {
 
 
