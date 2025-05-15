@@ -46,13 +46,13 @@ public class TeacherServiceImpl implements ITeacherService {
             Teacher teacher = Mapper.mapToTeacher(insertDTO);
 
             // Insert is NOT idempotent, (is not unchangeable)
-            if (teacherDAO.findByField("vat", insertDTO.getVat()).isPresent()) {
-                throw new EntityAlreadyExistsException("Teacher", "Teacher with vat: " + insertDTO.getVat() + " already exists");
+            if (teacherDAO.findByField("vat", insertDTO.vat()).isPresent()) {
+                throw new EntityAlreadyExistsException("Teacher", "Teacher with vat: " + insertDTO.vat() + " already exists");
             }
 
             TeacherReadOnlyDTO readOnlyDTO = teacherDAO.insert(teacher)
                     .map(Mapper::mapToTeacherReadOnlyDTO)
-                    .orElseThrow(() -> new EntityInvalidArgumentException("Teacher", "Teacher with VAT=" + insertDTO.getVat() + " not inserted"));
+                    .orElseThrow(() -> new EntityInvalidArgumentException("Teacher", "Teacher with VAT=" + insertDTO.vat() + " not inserted"));
             JPAHelper.commitTransaction();
             LOGGER.info("Teacher with id={}, vat={},  firstname={}, lastname={} inserted",
                     teacher.getId(), teacher.getVat(), teacher.getLastname(), teacher.getFirstname());
@@ -60,7 +60,7 @@ public class TeacherServiceImpl implements ITeacherService {
         } catch (EntityInvalidArgumentException e) {
             JPAHelper.rollbackTransaction();
             LOGGER.error("Failed to insert teacher vat={}, firstname={}, lastname={}, Reason={}",
-                    insertDTO.getVat(), insertDTO.getFirstname(), insertDTO.getLastname(), e.getCause(), e);
+                    insertDTO.vat(), insertDTO.firstname(), insertDTO.lastname(), e.getCause(), e);
             throw e;
         } finally {
             JPAHelper.closeEntityManager();
