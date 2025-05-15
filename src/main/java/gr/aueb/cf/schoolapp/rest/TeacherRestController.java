@@ -84,7 +84,7 @@ public class TeacherRestController {
     @GET
     @Path("/{teacherId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTeacherById(@PathParam("teacherId") Long id) throws EntityNotFoundException {
+    public Response getTeacher(@PathParam("teacherId") Long id) throws EntityNotFoundException {
 
         TeacherReadOnlyDTO readOnlyDTO = teacherService.getTeacherById(id);
 
