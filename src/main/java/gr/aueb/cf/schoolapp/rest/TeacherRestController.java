@@ -115,8 +115,8 @@ public class TeacherRestController {
     public PaginatedResult<TeacherReadOnlyDTO> getFilteredPaginated(@QueryParam("firstname") @DefaultValue("") String firstname,
                                                                     @QueryParam("lastname") @DefaultValue("") String lastname,
                                                                     @QueryParam("vat") @DefaultValue("") String vat,
-                                                                    @QueryParam("page") @DefaultValue("") Integer page,
-                                                                    @QueryParam("size") @DefaultValue("") Integer size)
+                                                                    @QueryParam("page") @DefaultValue("0") Integer page,
+                                                                    @QueryParam("size") @DefaultValue("0") Integer size)
             throws EntityInvalidArgumentException {
 
 
