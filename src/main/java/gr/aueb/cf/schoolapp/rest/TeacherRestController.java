@@ -69,4 +69,25 @@ public class TeacherRestController {
 
         return Response.status(Response.Status.OK).entity(readOnlyDTO).build();
     }
+
+    @Path("/{teacherId}")
+    @DELETE
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response deleteTeacher(@PathParam("teacherId") Long teacherId) throws EntityNotFoundException {
+
+        TeacherReadOnlyDTO readOnlyDTO = teacherService.getTeacherById(teacherId);
+        teacherService.deleteTeacher(teacherId);
+
+        return Response.status(Response.Status.OK).entity(readOnlyDTO).build();
+    }
+
+    @GET
+    @Path("/{teacherId}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getTeacherById(@PathParam("teacherId") Long id) throws EntityNotFoundException {
+
+        TeacherReadOnlyDTO readOnlyDTO = teacherService.getTeacherById(id);
+
+        return Response.status(Response.Status.OK).entity(readOnlyDTO).build();
+    }
 }
