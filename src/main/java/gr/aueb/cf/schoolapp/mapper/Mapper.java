@@ -16,7 +16,7 @@ public class Mapper {
     private Mapper() {}
 
     public static Teacher mapToTeacher(TeacherInsertDTO dto) {
-        return new Teacher(null, dto.getVat(), dto.getFirstname(), dto.getLastname());
+        return new Teacher(null, dto.vat(), dto.firstname(), dto.lastname());
     }
 
     public static Teacher mapToTeacher(TeacherUpdateDTO dto) {

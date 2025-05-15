@@ -10,18 +10,19 @@ import lombok.*;
 @Setter
 public class TeacherUpdateDTO {
 
-    @NotNull(message = "Ο κωδικός δεν μπορεί να μην υπάρχει.")
+    @NotNull(message = "id is required.")
     private Long id;
 
-    @NotNull(message = "Το όνομα δεν μπορεί να μην υπάρχει.")
-    @Size(min = 2, max = 255, message = "Το όνομα πρέπει να είναι μεταξύ 2-255 χαρακτήρων.")
+    @NotNull(message = "Firstname is required")
+    @Size(min = 2, max = 255, message = "Firstname must be between 2-255 characters")
     private String firstname;
 
-    @NotNull(message = "Το επώνυμο δεν μπορεί να μην υπάρχει.")
-    @Size(min = 2, max = 255, message = "Το επώνυμο πρέπει να είναι μεταξύ 2-255 χαρακτήρων.")
+    @NotNull(message = "Lastname is required")
+    @Size(min = 2, max = 255, message = "Lastname must be between 2-255 characters")
     private String lastname;
 
-    @NotNull(message = "Το ΑΦΜ δεν μπορεί να μην υπάρχει.")
-    @Size(min = 9, message = "Το ΑΦΜ πρέπει να περιέχει τουλάχιστον 9 ψηφία.")
+    @NotNull(message = "Vat is required")
+    @Size(min = 9, message = "Vat must include at least 9 digits")
     private String vat;
 }
+
