@@ -1,8 +1,6 @@
 package gr.aueb.cf.schoolapp.rest;
 
-import gr.aueb.cf.schoolapp.core.exceptions.EntityAlreadyExistsException;
-import gr.aueb.cf.schoolapp.core.exceptions.EntityInvalidArgumentException;
-import gr.aueb.cf.schoolapp.core.exceptions.EntityNotFoundException;
+import gr.aueb.cf.schoolapp.core.exceptions.*;
 import gr.aueb.cf.schoolapp.dto.*;
 import gr.aueb.cf.schoolapp.mapper.Mapper;
 import gr.aueb.cf.schoolapp.service.ITeacherService;
@@ -20,17 +18,18 @@ import java.net.URI;
 import java.util.List;
 import java.util.Map;
 
-@Path("/teachers")
 @ApplicationScoped
 @RequiredArgsConstructor(onConstructor = @__(@Inject))
+@Path("/teachers")
 public class TeacherRestController {
 
-//    @Inject
     private final ITeacherService teacherService;
 
+//    @Inject
 //    public TeacherRestController(ITeacherService teacherService) {
 //        this.teacherService = teacherService;
 //    }
+
 
     @POST
     @Path("")
@@ -39,7 +38,6 @@ public class TeacherRestController {
     public Response addTeacher(TeacherInsertDTO insertDTO, @Context UriInfo uriInfo)
             throws EntityInvalidArgumentException, EntityAlreadyExistsException {
         List<String> errors = ValidatorUtil.validateDTO(insertDTO);
-
         if (!errors.isEmpty()) {
             throw new EntityInvalidArgumentException("Teacher", String.join("\n", errors));
         }
@@ -49,7 +47,9 @@ public class TeacherRestController {
                 .path(String.valueOf(readOnlyDTO.id()))
                 .build();
 
-        return Response.created(newResourceUri).entity(readOnlyDTO).build();
+        return Response
+                .created(newResourceUri)
+                .entity(readOnlyDTO).build();
     }
 
     @PUT
@@ -58,38 +58,43 @@ public class TeacherRestController {
     @Produces(MediaType.APPLICATION_JSON)
     public Response updateTeacher(@PathParam("teacherId") Long teacherId, TeacherUpdateDTO updateDTO)
             throws EntityInvalidArgumentException, EntityNotFoundException {
-
         List<String> errors = ValidatorUtil.validateDTO(updateDTO);
-
         if (!errors.isEmpty()) {
             throw new EntityInvalidArgumentException("Teacher", String.join("\n", errors));
         }
 
         TeacherReadOnlyDTO readOnlyDTO = teacherService.updateTeacher(updateDTO);
-
-        return Response.status(Response.Status.OK).entity(readOnlyDTO).build();
+        return Response
+                .status(Response.Status.OK)
+                .entity(readOnlyDTO).build();
     }
 
-    @Path("/{teacherId}")
     @DELETE
+    @Path("/{teacherId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteTeacher(@PathParam("teacherId") Long teacherId) throws EntityNotFoundException {
+    public Response deleteTeacher(@PathParam("teacherId") Long teacherId)
+            throws EntityNotFoundException {
 
         TeacherReadOnlyDTO readOnlyDTO = teacherService.getTeacherById(teacherId);
         teacherService.deleteTeacher(teacherId);
-
-        return Response.status(Response.Status.OK).entity(readOnlyDTO).build();
+        return Response
+                .status(Response.Status.OK)
+                .entity(readOnlyDTO)
+                .build();
     }
 
     @GET
     @Path("/{teacherId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getTeacher(@PathParam("teacherId") Long id) throws EntityNotFoundException {
-
+    public Response getTeacher(@PathParam("teacherId") Long id)
+            throws EntityNotFoundException {
         TeacherReadOnlyDTO readOnlyDTO = teacherService.getTeacherById(id);
-
-        return Response.status(Response.Status.OK).entity(readOnlyDTO).build();
+        return Response
+                .status(Response.Status.OK)
+                .entity(readOnlyDTO)
+                .build();
     }
+
 
     @GET
     @Path("/filtered")
@@ -97,42 +102,45 @@ public class TeacherRestController {
     public Response getFiltered(@QueryParam("firstname") @DefaultValue("") String firstname,
                                 @QueryParam("lastname") @DefaultValue("") String lastname,
                                 @QueryParam("vat") @DefaultValue("") String vat) {
-
         TeacherFiltersDTO filtersDTO = new TeacherFiltersDTO(firstname, lastname, vat);
-
-        Map<String, Object> criteria;
+        Map<String , Object> criteria;
 
         criteria = Mapper.mapToCriteria(filtersDTO);
         List<TeacherReadOnlyDTO> readOnlyDTOS = teacherService.getTeachersByCriteria(criteria);
-
-        return Response.status(Response.Status.OK).entity(readOnlyDTOS).build();
+        return Response.status(Response.Status.OK)
+                .entity(readOnlyDTOS)
+                .build();
     }
 
 
     @GET
     @Path("/paginated")
     @Produces(MediaType.APPLICATION_JSON)
-    public PaginatedResult<TeacherReadOnlyDTO> getFilteredPaginated(@QueryParam("firstname") @DefaultValue("") String firstname,
-                                                                    @QueryParam("lastname") @DefaultValue("") String lastname,
-                                                                    @QueryParam("vat") @DefaultValue("") String vat,
-                                                                    @QueryParam("page") @DefaultValue("0") Integer page,
-                                                                    @QueryParam("size") @DefaultValue("10") Integer size)
+    public PaginatedResult<TeacherReadOnlyDTO> getFilteredPaginated(
+            @QueryParam("firstname") @DefaultValue("") String firstname,
+            @QueryParam("lastname") @DefaultValue("") String lastname,
+            @QueryParam("vat") @DefaultValue("") String vat,
+            @QueryParam("page") @DefaultValue("0") Integer page,
+            @QueryParam("size") @DefaultValue("10") Integer size
+    )
             throws EntityInvalidArgumentException {
-
-
-        TeacherFiltersDTO filtersDTO = new TeacherFiltersDTO(firstname, lastname, vat);
-
-        Map<String, Object> criteria;
-
-        criteria = Mapper.mapToCriteria(filtersDTO);
 
         if (page < 0) throw new EntityInvalidArgumentException("PageInvalidNumber", "Invalid page number");
         if (size <= 0) throw new EntityInvalidArgumentException("SizeInvalidNumber", "Invalid size number");
 
+        TeacherFiltersDTO filtersDTO = new TeacherFiltersDTO(firstname, lastname, vat);
+        Map<String , Object> criteria = Mapper.mapToCriteria(filtersDTO);
         List<TeacherReadOnlyDTO> readOnlyDTOS = teacherService.getTeachersByCriteriaPaginated(criteria, page, size);
+
         long totalItems = teacherService.getTeachersCountByCriteria(criteria);
         int totalPages = (int) Math.ceil((double) totalItems / size);
 
-        return new PaginatedResult<>(readOnlyDTOS, page, size, totalPages, totalItems);
+        return new PaginatedResult<>(
+                readOnlyDTOS,
+                page,
+                size,
+                totalPages,
+                totalItems
+        );
     }
 }
