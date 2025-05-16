@@ -64,8 +64,8 @@ public class JwtAuthenticationFilter implements ContainerRequestFilter {
                 if (user != null && jwtService.isTokenValid(token, user)) {
                     requestContext.setSecurityContext(new CustomSecurityContext(user));
                 } else {
-                    System.out.println("Token is not valid" + requestContext.getUriInfo());
-                    //
+//                    System.out.println("Token is not valid" + requestContext.getUriInfo());
+                    throw new EntityNotAuthorizedException("User", "Authorization must be provided");
                 }
             }
 //            String username = jwtService.extractSubject(token);
