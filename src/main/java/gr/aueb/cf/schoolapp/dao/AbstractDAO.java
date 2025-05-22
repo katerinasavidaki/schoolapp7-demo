@@ -5,7 +5,6 @@ import gr.aueb.cf.schoolapp.service.util.JPAHelper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
-import lombok.Setter;
 
 import java.util.*;
 
@@ -80,7 +79,6 @@ public abstract class AbstractDAO<T extends IdentifiableEntity> implements IGene
 
     @Override
     public long getCountByCriteria(Map<String, Object> criteria) {
-        EntityManager em = getEntityManager();
         CriteriaBuilder builder = getEntityManager().getCriteriaBuilder();
         CriteriaQuery<Long> countQuery = builder.createQuery(Long.class);
         Root<T> entityRoot = countQuery.from(persistenceClass);
@@ -89,12 +87,8 @@ public abstract class AbstractDAO<T extends IdentifiableEntity> implements IGene
         countQuery.select(builder.count(entityRoot))
                 .where(predicates.toArray(new Predicate[0]));
 
-        // Added
-        TypedQuery<Long> query = em.createQuery(countQuery);
-        addParametersToQuery(query, criteria);
-
-        return query
-//                .createQuery(countQuery)
+        return getEntityManager()
+                .createQuery(countQuery)
                 .getSingleResult();
     }
 
@@ -120,14 +114,12 @@ public abstract class AbstractDAO<T extends IdentifiableEntity> implements IGene
         selectQuery.select(entityRoot).where(predicates.toArray(new Predicate[0]));
         TypedQuery<T> query = em.createQuery(selectQuery);
         addParametersToQuery(query, criteria);
-//        List<T> entitiesToReturn = query.getResultList();
-//        if (entitiesToReturn != null) System.out.println("IN getByCriteriaDAO" + Arrays.toString(entitiesToReturn.toArray()));
-//        else System.out.println("IS NULL");
-//        return  entitiesToReturn;
-        return query.getResultList();
+        List<T> entitiesToReturn = query.getResultList();
+        if (entitiesToReturn != null) System.out.println("IN getByCriteriaDAO" + Arrays.toString(entitiesToReturn.toArray()));
+        else System.out.println("IS NULL");
+        return  entitiesToReturn;
     }
 
-    @SuppressWarnings("unchecked")
     protected List<Predicate> getPredicatesList(CriteriaBuilder builder, Root<T> entityRoot, Map<String , Object> criteria) {
         List<Predicate> predicates = new ArrayList<>();
 
@@ -268,14 +260,19 @@ public abstract class AbstractDAO<T extends IdentifiableEntity> implements IGene
 
         // Create query and apply pagination
         TypedQuery<T> query = em.createQuery(selectQuery);
-        addParametersToQuery(query, criteria);
 
         if (page != null && size != null) {
             query.setFirstResult(page * size);      // skip
             query.setMaxResults(size);
         }
+
         return query.getResultList();
     }
+
+
+//    protected String buildParameterAlias(String alias) {
+//        return alias.replaceAll("\\.", "");
+//    }
 
 
     public EntityManager getEntityManager() {
